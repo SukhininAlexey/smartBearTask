@@ -1,3 +1,44 @@
-.active{
-    background-color: yellow;
+body{
+    background-color: #F4F7FF;
+}
+
+input{
+    width: 100%;
+    border: none;
+    padding: .3rem;
+}
+
+.table-sm thead td, .table-sm thead th {
+    padding: 0;
+}
+
+.table{
+    background-color: #fff;
+}
+
+.table-head tr td{
+    border-bottom: none;
+}
+
+.logout-button{
+    height: 40px;
+}
+
+.user-wrapper{
+    margin: 10px 0px;
+}
+
+.user-header{
+    color: #0C20BE;
+}
+
+.pager-page{
+    margin: 0 2px;
+}
+
+.pager-wrapper, .user-wrapper{
+    padding: 5px 10px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    background-color: #fff;
 }

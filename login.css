@@ -1,0 +1,37 @@
+body{
+    background-color: #F4F7FF;
+}
+
+.container{
+    margin-top: 20vh;
+}
+
+.form-signin-heading{
+    margin-bottom: 30px;
+}
+
+.form-signin{
+    width: 450px;
+    padding: 20px 30px;
+    border: 2px solid #e0e0e0;
+    border-radius: 20px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.input-block-level{
+    text-align: center;
+    font-size: 20px;
+}
+
+.btn-large{
+    width: 180px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+p{
+    height: 20px;
+    color: red;
+    font-size: bold;
+}

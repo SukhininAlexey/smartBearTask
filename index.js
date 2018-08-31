@@ -10,10 +10,13 @@ $(function(){
     table.initialaze(auth);
     
     $("#logout").click(handelLogout);
-    $("#name-filter").change(function(){
+    $("#name-filter").keyup(function(){
         table.filter();
     });
-    $("#desc-filter").change(function(){
+    $("#age-filter").keyup(function(){
+        table.filter();
+    });
+    $("#desc-filter").keyup(function(){
         table.filter();
     });
 });
@@ -37,15 +40,18 @@ function getUser(auth, idToPlace){
 
 
 function Table(frameId){
-    
-    // Поля класса
-    this.table = null;
+
+    this.tbody = null;
     this.pager = null;
     this.pages = 1;
     this.page = 1;
     this.content = [];
     this.contentFiltered = [];
     this.frameId = frameId;
+}
+
+Table.prototype.initialaze = function(auth){
+    this.getGrid(auth, this.saveArrays.bind(this));
 }
 
 Table.prototype.getGrid = function(auth, callback){
@@ -74,11 +80,6 @@ Table.prototype.getList = function(auth, gridData, callback){
 }
 
 
-Table.prototype.initialaze = function(auth){
-    
-    this.getGrid(auth, this.saveArrays.bind(this));
-}
-
 Table.prototype.saveArrays = function(gridData, listData){
     
     imax = gridData.results.length;
@@ -88,51 +89,56 @@ Table.prototype.saveArrays = function(gridData, listData){
             Name: gridData.results[i].Name,
             Age: listData.results[i].Age,
             Description: gridData.results[i].Description,
-
         }
     }
-    
-    var table = this.filter();
-    
+    this.filter();
 }
 
 Table.prototype.filter = function(){
     var name = $("#name-filter").val();
     var desc = $("#desc-filter").val();
+    var age = $("#age-filter").val();
     var instance = this; 
     this.contentFiltered = [];
     
     this.content.forEach(function(element){
-        if((element.Name.indexOf(name) != -1) && (element.Description.indexOf(desc) != -1)){
+        var nameCheck = element.Name.indexOf(name) != -1;
+        var ageCheck = (element.Age === +age) || (+age === 0);
+        var descriptionCheck = element.Description.indexOf(desc) != -1;
+        
+        if(nameCheck && ageCheck && descriptionCheck){
             instance.contentFiltered.push(element);
         }
     });
     
-    this.pages = Math.ceil(this.contentFiltered.length / 10); // Общее количество страниц
+    this.pages = Math.ceil(this.contentFiltered.length / 10);
+    this.page = 1;
     this.addPagenation();
-    var table = this.render();
+    this.render();
 }
 
 Table.prototype.addPagenation = function(){
     $("#pager").remove();
     var pager = document.createElement("div");
     pager.setAttribute("id", "pager");
+    pager.classList.add("d-flex");
     for(var i = 0; i < this.pages; ++i){
-        var a = document.createElement("a");
-        a.textContent = (i+1);
-        a.setAttribute("href", "#");
-        pager.appendChild(a);
+        var button = document.createElement("button");
+        button.textContent = (i+1);
+        if(i == 0){
+            button.classList.add("active");
+        }
+        button.classList.add("pager-page", "btn", "btn-primary");
+        pager.appendChild(button);
     }
     
-    // Настраиваем смену страниц
     pager.addEventListener("click", function(event){
-        $("#pager > a").each(function(indx, element){
+        $("#pager > button").each(function(indx, element){
             element.classList.remove("active");
         });
         event.target.classList.add("active");
         this.page = event.target.textContent;
         this.render();
-        window.event.preventDefault();
     }.bind(this));
     
     this.pager = pager;
@@ -140,11 +146,10 @@ Table.prototype.addPagenation = function(){
 }
 
 Table.prototype.render = function(){
-    $("#table").remove();
-    var table = document.createElement("table");
-    table.setAttribute("id", "table");
+    $("#tbody").remove();
+    var tbody = document.createElement("tbody");
+    tbody.setAttribute("id", "tbody");
     
-    // Дробим на страницы
     var imin = (this.page - 1) * 10;
     var imax = this.page * 10;
     if(imax > this.contentFiltered.length){
@@ -166,9 +171,9 @@ Table.prototype.render = function(){
         tr.appendChild(age) ;
         tr.appendChild(description);
         
-        table.appendChild(tr);
+        tbody.appendChild(tr);
     }
- 
-    this.table = table;
-    $("#for-table").append(this.table);
+    
+    this.tbody = tbody;
+    $("#table").append(this.tbody);
 }
